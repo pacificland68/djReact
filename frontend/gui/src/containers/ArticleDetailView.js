@@ -1,12 +1,14 @@
 import React, {useState, useEffect} from "react";
 import axios from "axios";
-import { Card } from "antd";
-import { useParams } from 'react-router-dom';
+import { Card, Form, Button } from "antd";
+import { useParams, useNavigate } from 'react-router-dom';
+import CustomForm from "../components/Form"
 
 
-const ArticleDetail = () => {
+const ArticleDetail = (props) => {
   const [article, setArticle] = useState({})
   const { articleID } = useParams();
+  const navigate = useNavigate()
   console.log('articleID', articleID)
 
   useEffect(() => {
@@ -16,11 +18,22 @@ const ArticleDetail = () => {
     });
   },[])
 
+  const onFinish = (values)=> {
+    console.log('here is delete ')
+    axios.delete(`http://localhost:8000/api/${articleID}`)
+    navigate('/')
+  }
+
     return (
       <div>
         <Card title={article.title}>
           <p> {article.content} </p>
         </Card>
+        <CustomForm requestType="put" articleID={articleID} btnText="update"/>
+        <Form 
+          onFinish={onFinish}>
+          <Button type="danger" htmlType="submit">Delete</Button>
+        </Form>
       </div>
     );
 }
